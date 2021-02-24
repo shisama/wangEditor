@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wangEditor example</title>
+</head>
+
+<body>
+    <h1>jq create dom</h1>
+    <div class="wangEditor">
+        <p>加了p标签的内容</p>
+        尝试重现错误，是不是在编辑区域外，这行字不在任何标签内
+        <div>在写个div测试下</div>
+    </div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="../dist/wangEditor.js"></script>
+    <script>
+        var editorAreaDOM = $('.wangEditor'); //为包裹编辑器的DIV
+        var editor = null;
+        function createEditor(html) {
+            var editorArea = '#text-container', editorToolbar = '#toolbar-container', toolbar, textContent, E;
+            if (editor != null) {
+                editor.destroy();
+                editor = null;
+                $(editorToolbar).remove();
+                $(editorArea).remove();
+            }
+            // console.log(editorToolbar.substring(1), editorArea.substring(1))
+            toolbar = $('<div id="' + editorToolbar.substring(1) + '" class="toolbar"></div>');
+            textContent = $('<div id="' + editorArea.substring(1) + '" class="text" style="min-height:600px;max-height:1200px"></div>');
+            if (typeof html == 'string') {
+                $(html).appendTo(textContent);
+            }
+            $(toolbar).appendTo(editorAreaDOM);
+            $(textContent).appendTo(editorAreaDOM);
+            E = window.wangEditor;
+            // console.log('初始化时传的参数', { editorToolbar, editorArea })
+            editor = new E(editorToolbar, editorArea); // 如果不传入editorToolbar时,正常.
+            // editor = new E(editorArea); // 如果不传入editorToolbar时,正常.
+            // editor = new E('.wangEditor'); // 如果不传入editorToolbar时,正常.
+            editor.config.placeholder = '这里是我加的placeholder';
+            editor.config.zIndex = 10;
+            editor.config.uploadVideoServer = '/api/upload-video';
+            editor.config.uploadImgServer = '/upload/document/images';
+            editor.config.uploadImgParams = {
+                identify: 'online_image'
+            }
+            editor.config.height = 600;
+            editor.create();
+            return editor;
+        }
+        createEditor()
+    </script>
+</body>
+
+</html>
